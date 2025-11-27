@@ -1,0 +1,239 @@
+import { useEffect, useState } from 'react';
+import './child.css';
+import * as React from 'react';
+import Button from '@mui/material/Button';
+import { styled } from '@mui/material/styles';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
+import Autocomplete from '@mui/material/Autocomplete';
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2),
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+  },
+}));
+
+function ChildComponent({
+  isShowForm,
+  dataFlow,
+  info,
+  action,
+  closeDialog,
+}: {
+  isShowForm: boolean;
+  dataFlow: Function;
+  closeDialog: Function;
+  info: any;
+  action: string;
+}) {
+  const [name, setName] = useState('');
+  const [age, setAge] = useState<number | ''>('');
+  const [live, setLive] = useState('');
+  const [work, setWork] = useState('');
+
+  function closeForm(e: any) {
+    e.preventDefault();
+    closeDialog(false);
+  }
+
+  function handleSubmit(e: any) {
+    e.preventDefault();
+    const payload = {
+      id: action.includes('create') ? 'TCI' + `${Math.random()}` : info.id,
+      name: name,
+      age: age,
+      live: live,
+      work: work,
+      relationship: transformTextTo(value),
+    };
+    dataFlow(payload);
+    closeForm(e);
+  }
+
+  useEffect(() => {
+    if ((info && action.includes('update')) || action.includes('detail')) {
+      setName(info.row.name);
+      setAge(info.row.age);
+      setLive(info.row.live);
+      setValue(transformTextTo(info.row.relationship));
+      setWork(info.row.work);
+    } else {
+      setName('');
+      setAge('');
+      setLive('');
+      setValue('');
+      setWork('');
+    }
+  }, [info]);
+
+  const listOptions = ['Độc thân', 'Đã có gia đình', 'Đang hẹn hò'];
+
+  const [value, setValue] = React.useState<string | null>(listOptions[0]);
+
+  return (
+    <>
+      <React.Fragment>
+        <BootstrapDialog
+          onClose={closeForm}
+          aria-labelledby="customized-dialog-title"
+          open={isShowForm}
+        >
+          <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+            {tranformText(action)}
+          </DialogTitle>
+          <IconButton
+            aria-label="close"
+            onClick={closeForm}
+            sx={(theme) => ({
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: theme.palette.grey[500],
+            })}
+          >
+            <CloseIcon />
+          </IconButton>
+          <DialogContent dividers>
+            {isShowForm ? (
+              <div className="form-container">
+                <form className="form-container" onSubmit={handleSubmit}>
+                  <Box sx={{ width: 300, maxWidth: '100%' }}>
+                    <TextField
+                      size="small"
+                      type="text"
+                      fullWidth
+                      onChange={(e) => setName(e.target.value)}
+                      label="Name"
+                      value={action.includes('detail') ? info.row.name : name}
+                      disabled={action.includes('detail')}
+                      id="fullWidth"
+                    />
+                  </Box>
+                  <br />
+
+                  <Box sx={{ width: 300, maxWidth: '100%' }}>
+                    <TextField
+                      size="small"
+                      type="number"
+                      fullWidth
+                      onChange={(e) => setAge(Number(e.target.value))}
+                      label="Age"
+                      value={action.includes('detail') ? info.row.age : age}
+                      disabled={action.includes('detail')}
+                      id="fullWidth"
+                    />
+                  </Box>
+                  <br />
+
+                  <Box sx={{ width: 300, maxWidth: '100%' }}>
+                    <TextField
+                      size="small"
+                      type="text"
+                      fullWidth
+                      onChange={(e) => setLive(e.target.value)}
+                      label="Live"
+                      value={action.includes('detail') ? info.row.live : live}
+                      disabled={action.includes('detail')}
+                      id="fullWidth"
+                    />
+                  </Box>
+                  <br />
+
+                  <Box sx={{ width: 300, maxWidth: '100%' }}>
+                    <TextField
+                      size="small"
+                      type="text"
+                      fullWidth
+                      onChange={(e) => setWork(e.target.value)}
+                      label="work"
+                      value={action.includes('detail') ? info.row.work : work}
+                      disabled={action.includes('detail')}
+                      id="fullWidth"
+                    />
+                  </Box>
+
+                  <br />
+
+                  <Box sx={{ width: 300, maxWidth: '100%' }}>
+                    <Autocomplete
+                      value={value}
+                      size="small"
+                      onChange={(event: any, newValue: string | null) => {
+                        if (action.includes('detail')) {
+                          setValue(info.row.relationship);
+                        } else {
+                          setValue(newValue);
+                        }
+                      }}
+                      disabled={action.includes('detail')}
+                      id="controllable-states-demo"
+                      options={listOptions}
+                      renderInput={(params) => (
+                        <TextField {...params} label="Tình trạng hôn nhân" />
+                      )}
+                    />
+                  </Box>
+                  <br />
+                </form>
+              </div>
+            ) : (
+              <div></div>
+            )}
+          </DialogContent>
+          <DialogActions>
+            {action.includes('detail') ? (
+              <div></div>
+            ) : (
+              <Button autoFocus onClick={handleSubmit}>
+                {action.includes('update') ? 'Cập nhật' : 'Tạo mới'}
+              </Button>
+            )}
+          </DialogActions>
+        </BootstrapDialog>
+      </React.Fragment>
+    </>
+  );
+}
+
+function tranformText(value: string): string {
+  switch (value) {
+    case 'create':
+      return 'Thêm mới';
+    case 'update':
+      return 'Cập nhật';
+    case 'detail':
+      return 'Chi tiết';
+    default:
+      return '';
+  }
+}
+
+function transformTextTo(value: string): string {
+  switch (value) {
+    case 'alone':
+      return 'Độc thân';
+    case 'family':
+      return 'Đã có gia đình';
+    case 'in-relationship':
+      return 'Đang hẹn hò';
+    case 'Độc thân':
+      return 'alone';
+    case 'Đang hẹn hò':
+      return 'in-relationship';
+    case 'Đã có gia đình':
+      return 'family';
+    default:
+      return value || 'Không có dữ liệu';
+  }
+}
+
+export default ChildComponent;

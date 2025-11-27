@@ -1,0 +1,19 @@
+.action-btn {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 5vh;
+}
+
+.table-container .flex {
+  margin: 20px 0;
+}
+
+.flex {
+  display: flex;
+  gap: 23px;
+}
+
+.btn-search {
+  margin-top: 10px;
+}

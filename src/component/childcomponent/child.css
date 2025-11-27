@@ -1,0 +1,15 @@
+form {
+  max-width: 450px;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  font-family: Arial, sans-serif;
+}
+
+form label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #104b47;
+}
