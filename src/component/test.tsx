@@ -26,6 +26,7 @@ function Test() {
   const [type, setType] = useState('');
   const [selection, setSelection] = useState([]);
   const [listSelection, setListSelection] = useState<any[]>([]);
+  const [message, setMessage]= useState('');
 
   const [working, setWorking] = useState('');
   const [notification, setNotification] = useState(false);
@@ -161,8 +162,23 @@ function Test() {
 
   const handleSubmitChild = (formData: any) => {
     if (action.includes('create')) {
-      setInfo([...rows, formData]);
-      setListCopy(listCopy.concat(formData));
+      rows.find(v => {
+        if(v.name.includes(formData.name)){
+          setMessage('Không được trùng tên !Thêm mới thất bại')
+          setNotification(true);
+          setType('error');
+          setIsShowDialog(false);
+          setInfo([...rows]);
+          setListCopy([...listCopy]);
+
+        }
+        else {
+          setInfo([...rows, formData]);
+          setListCopy(listCopy.concat(formData));
+          setNotification(true);
+          setType('success');
+          setIsShowDialog(false);}
+      })
     } else {
       const updatedRows = rows.map((v) =>
         v.id === formData.id ? formData : v
@@ -170,13 +186,13 @@ function Test() {
       const updateCopy = listCopy.map((v) =>
         v.id === formData.id ? formData : v
       );
+      setMessage('')
       setInfo(updatedRows);
       setListCopy(updateCopy);
+      setNotification(true);
+      setType('success');
+      setIsShowDialog(false);
     }
-
-    setNotification(true);
-    setType('success');
-    setIsShowDialog(false);
   };
 
   const handleRowClick = (information: any, action: any) => {
@@ -214,7 +230,6 @@ function Test() {
           .toLowerCase()
           .includes(object.working.trim().toLowerCase())
     );
-    console.log(object);
     setInfo(result);
     if (
       (object.search && !object.relation) ||
@@ -241,6 +256,7 @@ function Test() {
   };
 
   const closeToast = (isShowDialog: boolean) => {
+    setNotification(isShowDialog)
     setIsShowDialog(isShowDialog);
   };
 
@@ -315,6 +331,7 @@ function Test() {
           closeToast={closeToast}
           type={type}
           notification={notification}
+          message={message}
         />
 
         <DialogComponent

@@ -14,13 +14,8 @@ function AlertComponent({
   message?: string;
 }) {
   const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
   ) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    closeToast(false);
+    closeToast(false)
   };
   return (
     <>
@@ -29,7 +24,7 @@ function AlertComponent({
           <>
             <Snackbar
               open={notification}
-              autoHideDuration={7000}
+              autoHideDuration={8000}
               onClose={handleClose}
             >
               <Alert
