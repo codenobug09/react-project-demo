@@ -18,6 +18,8 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import BottomAppBar from './appbottom/bottom.tsx';
+import ProminentAppBar from './apptop/top.tsx';
 function Test() {
   const [isShowForm, setShowForm] = useState(false);
   const [info, getInfo] = useState('');
@@ -27,7 +29,7 @@ function Test() {
   const [selection, setSelection] = useState([]);
   const [listSelection, setListSelection] = useState<any[]>([]);
   const [message, setMessage]= useState('');
-
+  const [isFilterSearchForm, setIsFilterSearch] = useState(false);
   const [working, setWorking] = useState('');
   const [notification, setNotification] = useState(false);
   const [infomation, getInformation] = useState(null);
@@ -260,6 +262,15 @@ function Test() {
     setIsShowDialog(isShowDialog);
   };
 
+  const showCreate = (isShowDialog: boolean) => {
+    setShowForm(isShowDialog);
+    setAction('create');
+  };
+
+  const isFilterSearch = (isShowDialog: boolean) => {
+    setIsFilterSearch(isShowDialog);
+  }
+
   const showDialog = (value: string) => {
     if (value.includes('cancel')) {
       setIsShowDialog(false);
@@ -312,6 +323,7 @@ function Test() {
   const [value, setValue] = React.useState<string | null>(listOptions[0]);
   return (
     <>
+    <ProminentAppBar isFilterSearch={isFilterSearch} />
       <div
         style={{
           display: 'flex',
@@ -340,6 +352,7 @@ function Test() {
           isShowDialog={isShowDialog}
         />
       </div>
+      { isFilterSearchForm ? (
       <Accordion>
         <AccordionSummary
           expandIcon={<GridArrowDownwardIcon />}
@@ -399,20 +412,10 @@ function Test() {
             </Button>
           </div>
         </AccordionDetails>
-      </Accordion>
+      </Accordion> ) : (<div></div>)
+}
       <div className="table-container">
         <div className="flex">
-          <Button
-            variant="contained"
-            onClick={() => {
-              setShowForm(true);
-              setAction('create');
-            }}
-            endIcon={<AddCircleOutlineIcon />}
-          >
-            Thêm nhân viên
-          </Button>
-
           <Button
             variant="contained"
             color="error"
@@ -443,6 +446,7 @@ function Test() {
           disableRowSelectionOnClick
         />
       </Box>
+      <BottomAppBar isShowForm={showCreate} />
     </>
   );
 }
