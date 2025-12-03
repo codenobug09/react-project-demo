@@ -34,7 +34,8 @@ const open = Boolean(anchorEl);
 const handleClick = (event: React.MouseEvent<HTMLElement>) => {
   setAnchorEl(event.currentTarget);
 };
-const handleClose = () => {
+const handleClose = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation()
     setAnchorEl(null);
 
   };

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import AlertComponent from './alertcomponent/alert.tsx';
-import ChildComponent from './childcomponent/child.tsx';
+import AlertComponent from '../../component/alertcomponent/alert.tsx';
+import ChildComponent from '../../component/childcomponent/child.tsx';
 import './test.css';
-import DialogComponent from './dialogcomponent/dialog.tsx';
+import DialogComponent from '../../component/dialogcomponent/dialog.tsx';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -18,8 +18,8 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import BottomAppBar from './appbottom/bottom.tsx';
-import ProminentAppBar from './apptop/top.tsx';
+import BottomAppBar from '../../component/appbottom/bottom.tsx';
+import ProminentAppBar from '../../component/apptop/top.tsx';
 function Test() {
   const [isShowForm, setShowForm] = useState(false);
   const [info, getInfo] = useState('');
@@ -363,7 +363,7 @@ function Test() {
         </AccordionSummary>
         <AccordionDetails>
           <div className="flex">
-            <Box sx={{ width: 300, maxWidth: '100%' }}>
+            <Box sx={{ width: 350, maxWidth: '100%' }}>
               <TextField
                 size="small"
                 type="text"
@@ -374,7 +374,7 @@ function Test() {
                 id="fullWidth"
               />
             </Box>
-            <Box sx={{ width: 300, maxWidth: '100%' }}>
+            <Box sx={{ width: 350, maxWidth: '100%' }}>
               <TextField
                 size="small"
                 type="text"
@@ -385,7 +385,7 @@ function Test() {
                 id="fullWidth"
               />
             </Box>
-            <Box sx={{ width: 300, maxWidth: '100%' }}>
+            <Box sx={{ width: 350, maxWidth: '100%' }}>
               <Autocomplete
                 value={value}
                 size="small"

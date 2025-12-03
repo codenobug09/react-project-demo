@@ -26,9 +26,12 @@ export default function BottomAppBar({
       <CssBaseline />
       <AppBar position="static" color="primary" sx={{ top: 'auto', bottom: 0 }}>
         <Toolbar>
-          <StyledFab color="secondary" aria-label="add">
+          {
+
+          <StyledFab color="info" aria-label="add">
             <AddIcon onClick={() => isShowForm(true)}/>
           </StyledFab>
+          }
           <Box sx={{ flexGrow: 1 }} />
         </Toolbar>
       </AppBar>
