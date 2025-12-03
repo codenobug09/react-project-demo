@@ -7,6 +7,7 @@ export default function MainLayout() {
       <nav style={{ display: "flex", gap: "12px", marginBottom: "20px" }}>
         <Link to="/">Home</Link>
         <Link to="/dashboard">Dashboard</Link>
+        <Link to="/profile">Profile</Link>
       </nav>
 
       <Outlet />

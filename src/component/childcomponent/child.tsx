@@ -42,6 +42,11 @@ function ChildComponent({
 
   function closeForm(e: any) {
     e.preventDefault();
+    setName('');
+      setAge('');
+      setLive('');
+      setValue('');
+      setWork('');
     closeDialog(false);
   }
 
@@ -66,14 +71,10 @@ function ChildComponent({
       setLive(info.row.live);
       setValue(transformTextTo(info.row.relationship));
       setWork(info.row.work);
-    } else {
-      setName('');
-      setAge('');
-      setLive('');
-      setValue('');
-      setWork('');
     }
   }, [info]);
+  
+
 
   const listOptions = ['Độc thân', 'Đã có gia đình', 'Đang hẹn hò'];
 

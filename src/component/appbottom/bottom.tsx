@@ -17,9 +17,11 @@ const StyledFab = styled(Fab)({
 });
 
 export default function BottomAppBar({
-    isShowForm
+    isShowForm,
+    showCreate
   }: {
-    isShowForm: Function
+    isShowForm?: Function,
+    showCreate: boolean
   }) {
   return (
     <React.Fragment>
@@ -27,10 +29,10 @@ export default function BottomAppBar({
       <AppBar position="static" color="primary" sx={{ top: 'auto', bottom: 0 }}>
         <Toolbar>
           {
-
+showCreate ? (
           <StyledFab color="info" aria-label="add">
             <AddIcon onClick={() => isShowForm(true)}/>
-          </StyledFab>
+          </StyledFab> ) : (<div></div>)
           }
           <Box sx={{ flexGrow: 1 }} />
         </Toolbar>

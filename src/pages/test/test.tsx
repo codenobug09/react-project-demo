@@ -10,7 +10,6 @@ import type { GridColDef } from '@mui/x-data-grid/models/colDef';
 import Box from '@mui/material/Box';
 import { DataGrid, GridArrowDownwardIcon } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import SearchIcon from '@mui/icons-material/Search';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -20,6 +19,8 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import BottomAppBar from '../../component/appbottom/bottom.tsx';
 import ProminentAppBar from '../../component/apptop/top.tsx';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+
 function Test() {
   const [isShowForm, setShowForm] = useState(false);
   const [info, getInfo] = useState('');
@@ -35,6 +36,7 @@ function Test() {
   const [infomation, getInformation] = useState(null);
   const [isShowDialog, setIsShowDialog] = useState(false);
   const [selectionBooolean, setSelectionBoolean] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
   const columns: GridColDef<(typeof rows)[number]>[] = [
     {
@@ -217,6 +219,10 @@ function Test() {
       relation: value,
       working: working,
     };
+
+    // setLoading(true);
+
+    if(object){
     const result = listCopy.filter(
       (v) =>
         v.name
@@ -233,19 +239,77 @@ function Test() {
           .includes(object.working.trim().toLowerCase())
     );
     setInfo(result);
+  }
+
+    if (!object.search && !object.relation && !object.working) {
+      setInfo(listCopy);
+    }
+
     if (
-      (object.search && !object.relation) ||
+      (object.search && !object.relation)
+    ) {
+      const result = listCopy.filter((v) =>
+        v.name.trim().toLowerCase().includes(object.search.trim().toLowerCase()) &&
+        v.work
+        .trim()
+        .toLowerCase()
+        .includes(transformText(object.working).trim().toLowerCase())
+      );
+      setInfo(result);
+    }
+
+    if (
       (object.search && !object.working)
+    ) {
+      const result = listCopy.filter((v) =>
+        v.name.trim().toLowerCase().includes(object.search.trim().toLowerCase()) &&
+        v.relationship
+        .trim()
+        .toLowerCase()
+        .includes(transformText(object.relation).trim().toLowerCase())
+      );
+      setInfo(result);
+    }
+
+    if(object.relation && object.working){
+      const result = listCopy.filter((v) =>
+      v.work.trim().toLowerCase().includes(object.working.trim().toLowerCase()) &&
+      v.relationship
+      .trim()
+      .toLowerCase()
+      .includes(transformText(object.relation).trim().toLowerCase())
+    );
+    setInfo(result);
+    }
+
+    if (
+      (object.search && !object.relation && !object.working)
     ) {
       const result = listCopy.filter((v) =>
         v.name.trim().toLowerCase().includes(object.search.trim().toLowerCase())
       );
       setInfo(result);
     }
-    if (!object.search && !object.relation && !object.working) {
-      setInfo(listCopy);
+
+    if (
+      (!object.search && !object.relation && object.working)
+    ) {
+      const result = listCopy.filter((v) =>
+        v.work.trim().toLowerCase().includes(object.working.trim().toLowerCase())
+      );
+      setInfo(result);
     }
+
+    // setLoading(false);
+
   };
+
+  const resetForm = () => {
+    setName('');
+    setWorking('');
+    setValue('');
+    searchValue()
+  }
 
   useEffect(() => {
     setTimeout(() => {
@@ -320,10 +384,10 @@ function Test() {
       setSelectionBoolean(true);
     }
   };
-  const [value, setValue] = React.useState<string | null>(listOptions[0]);
+  const [value, setValue] = useState(listOptions[0]);
   return (
     <>
-    <ProminentAppBar isFilterSearch={isFilterSearch} />
+    <ProminentAppBar showSearch={true} isFilterSearch={isFilterSearch} />
       <div
         style={{
           display: 'flex',
@@ -409,6 +473,16 @@ function Test() {
               endIcon={<SearchIcon />}
             >
               Tìm kiếm
+            </Button> 
+            <Button
+              variant="contained"
+              color='error'
+              onClick={() => {
+                resetForm();
+              }}
+              endIcon={<RestartAltIcon />}
+            >
+              Reset
             </Button>
           </div>
         </AccordionDetails>
@@ -444,9 +518,10 @@ function Test() {
           pageSizeOptions={[5, 10, 20]}
           checkboxSelection
           disableRowSelectionOnClick
+          // loading={loading}
         />
       </Box>
-      <BottomAppBar isShowForm={showCreate} />
+      <BottomAppBar showCreate={true} isShowForm={showCreate} />
     </>
   );
 }

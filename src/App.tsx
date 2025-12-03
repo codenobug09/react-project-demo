@@ -5,6 +5,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
 import ProtectedRoute from './routes/ProtectedRoute'
 import Test from './pages/test/test'
 import Dashboard from './pages/dashboard/dashboard'
+import Profile from './pages/profile/profile'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -20,16 +21,9 @@ function App() {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Test />} />
 
-          <Route path="login" element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="profile" element={<Profile />} />
 
-          {/* Protected route */}
-          <Route
-            path="dashboard"
-            element={
-              <ProtectedRoute>
-              </ProtectedRoute>
-            }
-          />
         </Route>
 
         

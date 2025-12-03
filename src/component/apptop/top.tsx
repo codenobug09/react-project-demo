@@ -11,6 +11,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Fade from '@mui/material/Fade';
 import React from 'react';
+import { Link, Navigate } from 'react-router';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   alignItems: 'flex-start',
@@ -25,9 +26,11 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 let boolean = true;
 
 export default function ProminentAppBar({
-    isFilterSearch
+    isFilterSearch,
+    showSearch
   }: {
-    isFilterSearch: Function
+    showSearch: boolean,
+    isFilterSearch?: Function
   }) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 const open = Boolean(anchorEl);
@@ -71,7 +74,7 @@ const handleClose = (e: React.MouseEvent<HTMLElement>) => {
      open={open}
      onClose={handleClose}
    >
-     <MenuItem onClick={handleClose}>Profile</MenuItem>
+     <MenuItem> <Link to="/profile">Profile</Link></MenuItem>
      <MenuItem onClick={handleClose}>My account</MenuItem>
      <MenuItem onClick={handleClose}>Logout</MenuItem>
    </Menu>
@@ -84,11 +87,13 @@ const handleClose = (e: React.MouseEvent<HTMLElement>) => {
           >
             MUI
           </Typography>
+          { showSearch ? (
           <IconButton size="large" aria-label="search" color="inherit">
             <SearchIcon onClick={() => {
                 boolean = !boolean
                 isFilterSearch(boolean)}} />
-          </IconButton>
+          </IconButton> ) : (<div></div>)
+  }
           <IconButton
             size="large"
             aria-label="display more actions"
