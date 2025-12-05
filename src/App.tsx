@@ -1,15 +1,12 @@
-import { Suspense, useState } from 'react'
+import { Suspense } from 'react'
 import './App.css'
 import MainLayout from './layout/MainLayout'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
-import ProtectedRoute from './routes/ProtectedRoute'
 import Test from './pages/test/test'
 import Dashboard from './pages/dashboard/dashboard'
 import Profile from './pages/profile/profile'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <BrowserRouter>
     <Suspense fallback={<h2>Loading...</h2>}>

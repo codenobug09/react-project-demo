@@ -8,8 +8,13 @@ import Typography from '@mui/material/Typography';
 import { Box } from '@mui/system';
 import VerticalTabs from '../../component/tab/tab';
 import { useState } from 'react';
+import { decrement, increment, incrementBy } from '../../redux/store/counterSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../redux/store/store';
 
 function Profile(){
+  const count = useSelector((state: RootState) => state.counter.value);
+  const dispatch = useDispatch<AppDispatch>();
   const [listLabel] = useState(['Thong tin ca nhan', 'dia chi'])
    return (
     <>
@@ -47,6 +52,21 @@ function Profile(){
           </Typography>
          
           <VerticalTabs listLabel={listLabel} />
+
+    <div style={{ padding: 20 }}>
+      <h1>{count}</h1>
+
+      <button onClick={() => dispatch(increment())}>+</button>
+      <button style={{ marginLeft: 8 }} onClick={() => dispatch(decrement())}>
+        -
+      </button>
+      <button
+        style={{ marginLeft: 8 }}
+        onClick={() => dispatch(incrementBy(5))}
+      >
+        +5
+      </button>
+    </div>
 
         </Box>
       </Card>

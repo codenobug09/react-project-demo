@@ -20,6 +20,12 @@ import Autocomplete from '@mui/material/Autocomplete';
 import BottomAppBar from '../../component/appbottom/bottom.tsx';
 import ProminentAppBar from '../../component/apptop/top.tsx';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../redux/store/store.ts';
+import { copyData, removeData } from '../../redux/store/copySave.tsx';
 
 function Test() {
   const [isShowForm, setShowForm] = useState(false);
@@ -31,13 +37,15 @@ function Test() {
   const [listSelection, setListSelection] = useState<any[]>([]);
   const [message, setMessage]= useState('');
   const [isFilterSearchForm, setIsFilterSearch] = useState(false);
+  const [copy, setCopy] = useState<any[]>([]);
   const [working, setWorking] = useState('');
   const [notification, setNotification] = useState(false);
   const [infomation, getInformation] = useState(null);
   const [isShowDialog, setIsShowDialog] = useState(false);
   const [selectionBooolean, setSelectionBoolean] = useState(false);
   // const [loading, setLoading] = useState(false);
-
+  const count = useSelector((state: RootState) => state.cache.value);
+  const dispatch = useDispatch<AppDispatch>();
   const columns: GridColDef<(typeof rows)[number]>[] = [
     {
       field: 'index',
@@ -86,31 +94,46 @@ function Test() {
         <>
           <div className="action-btn">
             {
+              <Tooltip title="Sửa">
+              <IconButton>
               <BorderColorIcon
                 color={'action'}
+                sx={{ cursor: 'pointer' }}
                 onClick={() => {
                   handleRowClick(params, 'update');
                   setShowForm(true);
                 }}
               />
+              </IconButton>
+              </Tooltip>
             }
             {
-              <DeleteIcon
-                color={'error'}
-                onClick={() => {
-                  deleteRow(params);
-                  setSelectionBoolean(false);
-                }}
-              />
-            }
-            {
+              <Tooltip title="Xem">
+              <IconButton>
               <VisibilityIcon
                 color={'info'}
+                sx={{ cursor: 'pointer' }}
                 onClick={() => {
                   handleRowClick(params, 'detail');
                   setShowForm(true);
                 }}
               />
+              </IconButton>
+              </Tooltip>
+            }
+            {
+              <Tooltip title="Xóa">
+              <IconButton>
+              <DeleteIcon
+                color={'error'}
+                sx={{ cursor: 'pointer' }}
+                onClick={() => {
+                  deleteRow(params);
+                  setSelectionBoolean(false);
+                }}
+              />
+              </IconButton>
+              </Tooltip>
             }
           </div>
         </>
@@ -384,6 +407,26 @@ function Test() {
       setSelectionBoolean(true);
     }
   };
+
+  const copySelection = () => {
+    const arr = new Set(selection);
+    const list: any[] = [];
+    if (arr.size) {
+      arr.forEach((v) => {
+        const element = rows.filter((e) => e.id == v);
+        list.push(element.map(e => e.name));
+        setListSelection(list);
+        setCopy(listSelection)
+        dispatch(copyData(copy))
+        console.log(copy)
+      });
+    } else {
+      setIsShowDialog(true);
+      setSelectionBoolean(true);
+    }
+  };
+
+
   const [value, setValue] = useState(listOptions[0]);
   return (
     <>
@@ -453,7 +496,7 @@ function Test() {
               <Autocomplete
                 value={value}
                 size="small"
-                onChange={(event: any, newValue: string | null) => {
+                onChange={(event: any, newValue: any) => {
                   setValue(newValue);
                 }}
                 id="controllable-states-demo"
@@ -497,6 +540,22 @@ function Test() {
             endIcon={<DeleteIcon />}
           >
             Xóa nhiều
+          </Button>
+          <Button 
+            variant="contained"
+            color="info"
+            onClick={copySelection}
+            endIcon={<ContentCopyIcon />}
+          >
+            Copy
+          </Button>
+          <Button 
+            variant="contained"
+            color="error"
+            onClick={() => { dispatch(removeData())}}
+            endIcon={<DeleteIcon />}
+          >
+           Xóa copy
           </Button>
         </div>
       </div>

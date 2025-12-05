@@ -59,7 +59,7 @@ function DialogComponent({
           {selection ? (
             <DialogContentText>
               {
-                'Bạn phải chọn ít nhất 1 bản ghi để thực hiện thao tác xóa nhiều !'
+                'Bạn phải chọn ít nhất 1 bản ghi để thực hiện hành động này !'
               }
             </DialogContentText>
           ) : (

@@ -104,7 +104,6 @@ function ChildComponent({
             <CloseIcon />
           </IconButton>
           <DialogContent dividers>
-            {isShowForm ? (
               <div className="form-container">
                 <form className="form-container" onSubmit={handleSubmit}>
                   <Box sx={{ width: 300, maxWidth: '100%' }}>
@@ -186,9 +185,6 @@ function ChildComponent({
                   <br />
                 </form>
               </div>
-            ) : (
-              <div></div>
-            )}
           </DialogContent>
           <DialogActions>
             {action.includes('detail') ? (
