@@ -16,7 +16,9 @@ function MenuComponent() {
             mouseX: number;
             mouseY: number;
           } | null>(null);
-        
+          
+
+          //context menu 
           const handleContextMenu = (event: React.MouseEvent) => {
             event.preventDefault();
         
@@ -48,7 +50,7 @@ function MenuComponent() {
             // setCache('');
           };
 
-
+          // cursor pointer check
           const paste = () => {
             const input = inputRef.current;
             if (!input) return;
