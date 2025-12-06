@@ -13,7 +13,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.5",
-    "@mui/material": "^7.3.5",
+    "@mui/material": "^7.3.6",
     "@mui/styled-engine-sc": "^7.3.5",
     "@mui/x-data-grid": "^8.19.0",
     "@mui/x-data-grid-generator": "^8.19.0",
@@ -37,6 +37,6 @@
     "globals": "^16.5.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
-    "vite": "^7.2.2"
+    "vite": "^7.2.6"
   }
 }

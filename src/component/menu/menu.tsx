@@ -12,14 +12,49 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { removeData } from "../../redux/store/copySave";
-
+import Tooltip from "@mui/material/Tooltip";
+import MoodIcon from '@mui/icons-material/Mood';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
+import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
+import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 function MenuComponent() {
   const count = useSelector((state: RootState) => state.cache.value);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const [isShowCopy, setShowCopy] = React.useState<boolean>(false);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+  const listIcons = [
+    {
+      "key": 'smile-icon',
+      "value": <SentimentSatisfiedAltIcon />,
+      "tooltip": "icon cười",
+      "text": "😂"
+    }
+    ,
+    {
+      "key": 'sad-icon',
+      "value": <SentimentVeryDissatisfiedIcon />,
+      "tooltip": "icon buồn",
+      "text": "😢"
+    },
+    {
+      "key": 'angry-icon',
+      "value": <SentimentDissatisfiedIcon />,
+      "tooltip": "icon tức giận",
+      "text": "😡"
+    },
+    {
+      "key": 'like-icon',
+      "value": <ThumbUpIcon />,
+      "tooltip": "icon like",
+      "text": "👍"
+    }
+  ]
   const [cache, setCache] = useState("");
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
@@ -33,13 +68,13 @@ function MenuComponent() {
     setContextMenu(
       contextMenu === null
         ? {
-            mouseX: event.clientX + 2,
-            mouseY: event.clientY - 6,
-          }
+          mouseX: event.clientX + 2,
+          mouseY: event.clientY - 6,
+        }
         : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
-          // Other native context menus might behave different.
-          // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
-          null
+        // Other native context menus might behave different.
+        // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
+        null
     );
 
     // Prevent text selection lost after opening the context menu on Safari and Firefox
@@ -60,7 +95,7 @@ function MenuComponent() {
   };
 
   // // cursor pointer check
-  const paste = () => {
+  const paste = (type?: string) => {
     const input = inputRef.current;
     if (!input) return;
 
@@ -78,7 +113,7 @@ function MenuComponent() {
     });
   };
 
-  const pasteClipBoard = (element ?: any) => {
+  const pasteClipBoard = (element?: any) => {
     const input = inputRef.current;
     if (!input) return;
 
@@ -95,6 +130,7 @@ function MenuComponent() {
       input.setSelectionRange(pos, pos);
     });
   };
+  
 
   useEffect(() => {
     if (count) {
@@ -102,6 +138,7 @@ function MenuComponent() {
     }
   }, [count]);
 
+  let showCopy: boolean = false;
   function a11yProps(index: number) {
     return {
       id: `vertical-tab-${index}`,
@@ -129,7 +166,7 @@ function MenuComponent() {
             : undefined
         }
       >
-        <MenuItem onClick={paste}>
+        <MenuItem onClick={() => paste('')}>
           {" "}
           <ListItemIcon>
             <ContentPaste fontSize="small" />
@@ -152,29 +189,56 @@ function MenuComponent() {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
       >
         <div className="flex align-center">
-        <IconButton>
-        <AssignmentIndIcon />
-        </IconButton> 
-        <IconButton>
-                  <DeleteIcon
-                    sx={{ cursor: "pointer" }}
-                    onClick={() => {
-                      dispatch(removeData());
-                    }}
-                  />
-        </IconButton>
+          <Tooltip title="Icon list">
+            <IconButton >
+              <MoodIcon onClick={() => {
+                showCopy = !showCopy
+                setShowCopy(showCopy)
+              }} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Paste tất cả">
+            <IconButton>
+              <AssignmentIndIcon sx={{ cursor: "pointer" }}
+                onClick={() => paste('paste-all')} />
+            </IconButton>
+          </Tooltip>
+          <h5>Clip board</h5>
+          <Tooltip title="Xóa">
+            <IconButton>
+              <DeleteIcon
+                sx={{ cursor: "pointer" }}
+                onClick={() => {
+                  dispatch(removeData());
+                }}
+              />
+            </IconButton>
+          </Tooltip>
         </div>
-        {count?.map((element: any, index: any) => (
+        {isShowCopy ? count?.map((element: any, index: any) => (
           <MenuItem key={index} onClick={() => pasteClipBoard(element)} {...a11yProps(index)}>
             {element}{" "}
           </MenuItem>
-        ))}
+        )) :
+          <>
+            <div>
+              <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', display: 'flex', gap: 0 }}>
+                {listIcons.map((e: any, index: any) => (
+                  <ListItem sx={{ padding: 0}}  key={e.key}>
+                    <Tooltip title={e.tooltip}>
+                    <IconButton onClick={() => pasteClipBoard(e.text)} {...a11yProps(index)} >
+                      {e.value}
+                    </IconButton>
+                    </Tooltip>
+                  </ListItem>
+                ))
+                }
+              </List>
+            </div>
+          </>
+        }
       </Menu>
     </div>
   );
