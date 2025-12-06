@@ -15,10 +15,9 @@ const copySave = createSlice({
     copyData: (state, action) => {
       state.value.push(action.payload);
     },
-    removeData:(state) => {
-      state.value = []
-    }
-    
+    removeData: (state) => {
+      state.value = [];
+    },
   },
 });
 

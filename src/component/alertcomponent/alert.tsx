@@ -1,6 +1,6 @@
-import Snackbar, { type SnackbarCloseReason } from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
-import './alert.css';
+import Snackbar, { type SnackbarCloseReason } from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import "./alert.css";
 
 function AlertComponent({
   type,
@@ -8,14 +8,13 @@ function AlertComponent({
   closeToast,
   message,
 }: {
-  type: 'success' | 'info' | 'warning' | 'error';
+  type: "success" | "info" | "warning" | "error";
   notification: boolean;
   closeToast: Function;
   message?: string;
 }) {
-  const handleClose = (
-  ) => {
-    closeToast(false)
+  const handleClose = () => {
+    closeToast(false);
   };
   return (
     <>
@@ -31,7 +30,7 @@ function AlertComponent({
                 onClose={handleClose}
                 severity={type}
                 variant="filled"
-                sx={{ width: '100%' }}
+                sx={{ width: "100%" }}
               >
                 <div className="text">{message || transformText(type)}</div>
               </Alert>
@@ -47,16 +46,16 @@ function AlertComponent({
 
 function transformText(value: string): string {
   switch (value) {
-    case 'success':
-      return 'Thành công!';
-    case 'info':
-      return 'Thông báo!';
-    case 'warning':
-      return 'Cảnh báo!';
-    case 'error':
-      return 'Lỗi!';
+    case "success":
+      return "Thành công!";
+    case "info":
+      return "Thông báo!";
+    case "warning":
+      return "Cảnh báo!";
+    case "error":
+      return "Lỗi!";
     default:
-      return '';
+      return "";
   }
 }
 

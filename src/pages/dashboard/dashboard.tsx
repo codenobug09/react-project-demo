@@ -11,9 +11,6 @@ function Dashboard() {
      <MenuComponent /> 
     </div>
      <BottomAppBar showCreate={false} />
-     {/* <div style={{ padding: 20 }}>
-      <h1>{count}</h1>
-      </div> */}
     </>
   )
 }

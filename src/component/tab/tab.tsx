@@ -1,9 +1,9 @@
-import * as React from 'react';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import './tab.css'
+import * as React from "react";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import "./tab.css";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -34,45 +34,49 @@ function TabPanel(props: TabPanelProps) {
 function a11yProps(index: number) {
   return {
     id: `vertical-tab-${index}`,
-    'aria-controls': `vertical-tabpanel-${index}`,
+    "aria-controls": `vertical-tabpanel-${index}`,
   };
 }
 
-export default function VerticalTabs({listLabel}: {listLabel: string[]}) {
+export default function VerticalTabs({ listLabel }: { listLabel: string[] }) {
   const [value, setValue] = React.useState(0);
-  
+
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
   return (
     <>
-    <Box
-      sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: 224 }}
-    >
-      <Tabs
-      orientation="vertical"
-      variant="scrollable"
-      value={value}
-      onChange={handleChange}
-      aria-label="Vertical tabs example"
-    >
-      {listLabel?.map((element, index) => (
-        <Tab key={index} label={element} {...a11yProps(index)} />
-      ))}
-    </Tabs>
-    
+      <Box
+        sx={{
+          flexGrow: 1,
+          bgcolor: "background.paper",
+          display: "flex",
+          height: 224,
+        }}
+      >
+        <Tabs
+          orientation="vertical"
+          variant="scrollable"
+          value={value}
+          onChange={handleChange}
+          aria-label="Vertical tabs example"
+        >
+          {listLabel?.map((element, index) => (
+            <Tab key={index} label={element} {...a11yProps(index)} />
+          ))}
+        </Tabs>
 
-    <TabPanel value={value} index={0}>
-      Item One
-    </TabPanel>
-    <TabPanel value={value} index={1}>
-      Item Two
-    </TabPanel>
-    <TabPanel value={value} index={2}>
-      Item Three
-    </TabPanel>
-    </Box>
+        <TabPanel value={value} index={0}>
+          Item One
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          Item Two
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          Item Three
+        </TabPanel>
+      </Box>
     </>
   );
 }
