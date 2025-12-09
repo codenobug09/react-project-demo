@@ -20,6 +20,15 @@ import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import TextField from "@mui/material/TextField";
+import Search from "@mui/icons-material/Search";
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import GradeIcon from '@mui/icons-material/Grade';
+import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
+import FaceIcon from '@mui/icons-material/Face';
+
 function MenuComponent() {
   const count = useSelector((state: RootState) => state.cache.value);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -28,7 +37,8 @@ function MenuComponent() {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  const listIcons = [
+  const [icon, setIcon] = React.useState('')
+  const [listIcons, setListIcons] = React.useState([
     {
       "key": 'smile-icon',
       "value": <SentimentSatisfiedAltIcon />,
@@ -53,8 +63,39 @@ function MenuComponent() {
       "value": <ThumbUpIcon />,
       "tooltip": "icon like",
       "text": "👍"
-    }
-  ]
+    },
+    {
+      "key": 'unlike-icon',
+      "value": <ThumbDownIcon />,
+      "tooltip": "icon unlike",
+      "text": "👎"
+    },
+    {
+      "key": 'heart-icon',
+      "value": <FavoriteIcon />,
+      "tooltip": "icon tym",
+      "text": "❤️"
+    },
+    {
+      "key": 'grade-icon',
+      "value": <GradeIcon />,
+      "tooltip": "icon sao",
+      "text": "⭐"
+    },
+    {
+      "key": 'fire-icon',
+      "value": <LocalFireDepartmentIcon />,
+      "tooltip": "icon lửa",
+      "text": "🔥"
+    },
+    {
+      "key": 'kid-icon',
+      "value": <FaceIcon />,
+      "tooltip": "icon kid",
+      "text": "🧒"
+    },
+  ])
+  const [listCopy, setListCopy] = useState<any[]>(listIcons);
   const [cache, setCache] = useState("");
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
@@ -71,9 +112,7 @@ function MenuComponent() {
           mouseX: event.clientX + 2,
           mouseY: event.clientY - 6,
         }
-        : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
-        // Other native context menus might behave different.
-        // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
+        :
         null
     );
 
@@ -91,7 +130,6 @@ function MenuComponent() {
   const handleClose = () => {
     setContextMenu(null);
     setAnchorEl(null);
-    // setCache('');
   };
 
   // // cursor pointer check
@@ -103,7 +141,7 @@ function MenuComponent() {
     const end = input.selectionEnd!;
 
     const newText =
-      cache.slice(0, start) + count[count.length - 1] + cache.slice(end);
+      cache.slice(0, start) + JSON.stringify(count[count.length - 1]) + cache.slice(end);
 
     setCache(newText);
 
@@ -113,22 +151,33 @@ function MenuComponent() {
     });
   };
 
-  const pasteClipBoard = (element?: any) => {
+  const pasteClipBoard = (element?: any, icon?: boolean) => {
     const input = inputRef.current;
     if (!input) return;
 
     const start = input.selectionStart!;
     const end = input.selectionEnd!;
-
+    
+    if (icon){
     const newText =
       cache.slice(0, start) + element + cache.slice(end);
-
-    setCache(newText);
+      setCache(newText);
 
     requestAnimationFrame(() => {
       const pos = start;
       input.setSelectionRange(pos, pos);
     });
+    }
+    else {
+      const newText =
+      cache.slice(0, start) + JSON.stringify(element) + cache.slice(end);
+      setCache(newText);
+
+    requestAnimationFrame(() => {
+      const pos = start;
+      input.setSelectionRange(pos, pos);
+    });
+    }
   };
   
 
@@ -138,7 +187,16 @@ function MenuComponent() {
     }
   }, [count]);
 
-  let showCopy: boolean = false;
+
+  const searchValue = (value : string) => {
+    if(value){
+      const icons = listCopy.filter(e => e.tooltip.trim().toLowerCase().includes(value.trim().toLowerCase()))
+      setListIcons(icons)
+    }else {
+      setListIcons(listCopy)
+    }
+  }
+
   function a11yProps(index: number) {
     return {
       id: `vertical-tab-${index}`,
@@ -180,10 +238,17 @@ function MenuComponent() {
           </ListItemIcon>
           Open Clip Board
         </MenuItem>
+        <MenuItem onClick={handleClick}>
+          {" "}
+          <ListItemIcon>
+            <FileCopyIcon fontSize="small" />
+          </ListItemIcon>
+          Open Remove Copy
+        </MenuItem>
       </Menu>
 
       <Menu
-        sx={{ overflow: "hidden", maxHeight: 300, width: '500px' }}
+        sx={{ overflow: "hidden", maxHeight: 400, width: 500 }}
         id="demo-positioned-menu"
         aria-labelledby="demo-positioned-button"
         anchorEl={anchorEl}
@@ -194,15 +259,16 @@ function MenuComponent() {
           <Tooltip title="Icon list">
             <IconButton >
               <MoodIcon onClick={() => {
-                showCopy = !showCopy
-                setShowCopy(showCopy)
+                setShowCopy(false)
               }} />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Paste tất cả">
+          <Tooltip title="Paste">
             <IconButton>
               <AssignmentIndIcon sx={{ cursor: "pointer" }}
-                onClick={() => paste('paste-all')} />
+                onClick={() => {setShowCopy(true)
+                  console.log(count) }
+                } />
             </IconButton>
           </Tooltip>
           <h5>Clip board</h5>
@@ -211,24 +277,41 @@ function MenuComponent() {
               <DeleteIcon
                 sx={{ cursor: "pointer" }}
                 onClick={() => {
-                  dispatch(removeData());
+
+                  dispatch(removeData(count));
+                  // console.log(count)
                 }}
               />
             </IconButton>
           </Tooltip>
         </div>
         {isShowCopy ? count?.map((element: any, index: any) => (
-          <MenuItem key={index} onClick={() => pasteClipBoard(element)} {...a11yProps(index)}>
-            {element}{" "}
+          <MenuItem disabled={!element} key={index} onClick={() => pasteClipBoard(element, false)} {...a11yProps(index)}>
+            {element ? element?.name : 'Khong co du lieu'}
           </MenuItem>
         )) :
           <>
             <div>
-              <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', display: 'flex', gap: 0 }}>
+              <List sx={{ width: 200, bgcolor: 'background.paper', maxHeight: 128 ,display: 'flex', flexWrap: 'wrap',
+               gap: 0 }}>
+                <div className="div_text">
+                  <TextField
+                      size="small"
+                      type="text"
+                      sx={{ width: 140, height: 20}}
+                      onChange={(e) => setIcon(e.target.value)}
+                      label="Icon"
+                      value={icon}
+                      id="fullWidth"
+                    />
+                    <IconButton onClick={() => searchValue(icon)} >
+                      <Search />
+                    </IconButton>
+                </div>
                 {listIcons.map((e: any, index: any) => (
-                  <ListItem sx={{ padding: 0}}  key={e.key}>
+                  <ListItem sx={{ padding: 0, width: 50}}  key={e.key}>
                     <Tooltip title={e.tooltip}>
-                    <IconButton onClick={() => pasteClipBoard(e.text)} {...a11yProps(index)} >
+                    <IconButton onClick={() => pasteClipBoard(e.text, true)} {...a11yProps(index)} >
                       {e.value}
                     </IconButton>
                     </Tooltip>

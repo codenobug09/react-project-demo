@@ -3,3 +3,7 @@
     gap: 2px;
     justify-content: space-evenly;
 }
+
+.div_text{
+    padding: 0 10px;
+}

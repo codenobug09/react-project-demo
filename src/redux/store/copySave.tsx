@@ -5,18 +5,18 @@ interface CounterState {
 }
 
 const initialState: CounterState = {
-  value: [],
+  value: []
 };
 
 const copySave = createSlice({
-  name: "counter",
+  name: "copy",
   initialState,
   reducers: {
     copyData: (state, action) => {
       state.value.push(action.payload);
     },
     removeData: (state) => {
-      state.value = ["", ""];
+      state.value = ["Không có dữ liệu"];
     }
   },
 });

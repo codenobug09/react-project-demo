@@ -60,8 +60,15 @@ function ChildComponent({
       work: work,
       relationship: transformTextTo(value),
     };
+    if(name && age && live && work && value){
     dataFlow(payload);
     closeForm(e);
+    }
+    else {
+      dataFlow({
+        id: ''
+      });
+    }
   }
 
   useEffect(() => {

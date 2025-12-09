@@ -26,6 +26,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../redux/store/store.ts";
 import { copyData, removeData } from "../../redux/store/copySave.tsx";
+import { isFulfilled } from "@reduxjs/toolkit";
 
 function Test() {
   const [isShowForm, setShowForm] = useState(false);
@@ -43,6 +44,12 @@ function Test() {
   const [infomation, getInformation] = useState(null);
   const [isShowDialog, setIsShowDialog] = useState(false);
   const [selectionBooolean, setSelectionBoolean] = useState(false);
+  const [car, setCar] = useState({
+    brand: "Ford",
+    model: "Mustang",
+    year: "1964",
+    color: "red"
+  });
   // const [loading, setLoading] = useState(false);
   const count = useSelector((state: RootState) => state.cache.value);
   const dispatch = useDispatch<AppDispatch>();
@@ -140,7 +147,11 @@ function Test() {
       ),
     },
   ];
-
+ const updateColor = () => {
+    setCar(previousState => {
+      return { ...previousState, color: "blue" }
+    });
+  }
   const [rows, setInfo] = useState([
     {
       id: "TCI1",
@@ -189,23 +200,33 @@ function Test() {
 
   const handleSubmitChild = (formData: any) => {
     if (action.includes("create")) {
-      rows.find((v) => {
-        if (v.name.includes(formData.name)) {
-          setMessage("Không được trùng tên !Thêm mới thất bại");
-          setNotification(true);
-          setType("error");
-          setIsShowDialog(false);
-          setInfo([...rows]);
-          setListCopy([...listCopy]);
-        } else {
+      if(formData.name){
+      const element = rows.filter(e => e.name.includes(formData.name))
+      if(element.length){
+        setType("error");
+        setIsShowDialog(false);
+        setMessage("Không được trùng tên! Thêm mới thất bại");
+        setNotification(true);
+      }
+      else {
           setInfo([...rows, formData]);
           setListCopy(listCopy.concat(formData));
           setNotification(true);
+          setMessage("Thêm mới thanh cong");
           setType("success");
           setIsShowDialog(false);
-        }
-      });
-    } else {
+      }
+
+    }
+  else {
+    setMessage("Không được để trống các trường! Thêm mới thất bại");
+    setNotification(true);
+    setType("error");
+    setIsShowDialog(false);
+  }}else {
+      if(formData?.name) {
+      const element = rows.filter(e => (e.name == formData?.name))
+      if(!element.length) {
       const updatedRows = rows.map((v) =>
         v.id === formData.id ? formData : v
       );
@@ -218,7 +239,20 @@ function Test() {
       setNotification(true);
       setType("success");
       setIsShowDialog(false);
+      }
+      else {
+        setType("error");
+        setIsShowDialog(false);
+        setMessage("Không được trùng tên! Cap nhat thất bại");
+        setNotification(true);
+      }
     }
+    else {
+      setType("error");
+      setIsShowDialog(false);
+      setMessage("Không được để trống các trường! Cap nhat thất bại");
+      setNotification(true);
+    }}
   };
 
   const handleRowClick = (information: any, action: any) => {
@@ -232,6 +266,8 @@ function Test() {
 
   const deleteRow = (information: any) => {
     setIsShowDialog(true);
+    setMessage("Xoa thanh cong!");
+
     getInformation(information);
   };
 
@@ -419,11 +455,14 @@ function Test() {
     if (arr.size) {
       arr.forEach((v) => {
         const element = rows.filter((e) => e.id == v);
-        list.push(element.map((e) => e.name));
+        // list.push(element.map((e) => e.name));
+        list.push(element[0]);
+
         setListSelection(list);
         setCopy(listSelection);
-        dispatch(copyData(copy));
-        console.log(copy);
+        dispatch(copyData(copy[0]));
+        console.log(copy[0]);
+        console.log(element[0])
       });
     } else {
       setIsShowDialog(true);
@@ -589,6 +628,16 @@ function Test() {
         />
       </Box>
       <BottomAppBar showCreate={true} isShowForm={showCreate} />
+      {/* <>
+      <h1>My {car.brand}</h1>
+      <p>
+        It is a {car.color} {car.model} from {car.year}.
+      </p>
+      <button
+        type="button"
+        onClick={updateColor}
+      >Blue</button>
+    </> */}
     </>
   );
 }
