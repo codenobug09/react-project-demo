@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import "./menu.css";
 import MenuItem from "@mui/material/MenuItem";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
@@ -28,7 +28,27 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import GradeIcon from '@mui/icons-material/Grade';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import FaceIcon from '@mui/icons-material/Face';
-
+const ProductItem = React.memo(({ product, onFavorite }) => {
+  console.log(`Rendering ${product.name}`);
+  return (
+    <div className="p-4 w-full border rounded-md shadow-sm mb-4 flex flex-col items-center text-center">
+      <img 
+        src={product.image} 
+        alt={product.name} 
+        className="w-32 h-32 object-cover rounded-md mb-2"
+      />
+      <h3 className="text-lg font-semibold">{product.name}</h3>
+      <button 
+        onClick={() => onFavorite(product.id)} 
+        className={`px-4 py-2 rounded-md ${
+          product.isFavorite ? 'bg-red-500' : 'bg-gray-300'
+        }`}
+      >
+        {product.isFavorite ? "❤️ Unfavorite" : "🤍 Favorite"}
+      </button>
+    </div>
+  );
+});
 function MenuComponent() {
   const count = useSelector((state: RootState) => state.cache.value);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -154,7 +174,7 @@ function MenuComponent() {
   const pasteClipBoard = (element?: any, icon?: boolean) => {
     const input = inputRef.current;
     if (!input) return;
-
+   
     const start = input.selectionStart!;
     const end = input.selectionEnd!;
     
@@ -172,20 +192,40 @@ function MenuComponent() {
       const newText =
       cache.slice(0, start) + JSON.stringify(element) + cache.slice(end);
       setCache(newText);
-
     requestAnimationFrame(() => {
       const pos = start;
       input.setSelectionRange(pos, pos);
     });
     }
   };
-  
 
+
+ 
   useEffect(() => {
     if (count) {
       setCache("");
     }
   }, [count]);
+  
+  const [products, setProducts] = useState([
+    { id: 1, name: 'Product 1', image: 'https://res.cloudinary.com/muhammederdem/image/upload/q_60/v1536405217/starwars/item-2.webp', isFavorite: false },
+    { id: 2, name: 'Product 2', image: 'https://res.cloudinary.com/muhammederdem/image/upload/q_60/v1536405217/starwars/item-1.webp', isFavorite: false },
+    { id: 3, name: 'Product 3', image: 'https://res.cloudinary.com/muhammederdem/image/upload/q_60/v1536405217/starwars/item-3.webp', isFavorite: false }
+  ]);
+
+  // const toggleFavorite = useCallback((id) => {
+  //   setProducts(products.map(product =>
+  //     product.id === id ? { ...product, isFavorite: !product.isFavorite } : product
+  //   ));
+  // }, [products]); 
+
+  const toggleFavorite = useCallback((id : any) => {
+    setProducts((prevProducts) =>
+      prevProducts.map(product =>
+        product.id === id ? { ...product, isFavorite: !product.isFavorite } : product
+      )
+    );
+}, []);
 
 
   const searchValue = (value : string) => {
@@ -323,6 +363,18 @@ function MenuComponent() {
           </>
         }
       </Menu>
+      <div className="w-full p-10">
+      <h2 className="text-2xl font-bold mb-6 text-center">Product List</h2>
+      <div className="flex space-x-10 w-full">
+        {products.map(product => (
+          <ProductItem 
+            key={product.id} 
+            product={product} 
+            onFavorite={toggleFavorite} 
+          />
+        ))}
+      </div>
+    </div>
     </div>
   );
 }
