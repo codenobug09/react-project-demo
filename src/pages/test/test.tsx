@@ -147,7 +147,7 @@ function Test() {
       ),
     },
   ];
- const updateColor = () => {
+  const updateColor = () => {
     setCar(previousState => {
       return { ...previousState, color: "blue" }
     });
@@ -200,59 +200,61 @@ function Test() {
 
   const handleSubmitChild = (formData: any) => {
     if (action.includes("create")) {
-      if(formData.name){
-      const element = rows.filter(e => e.name.includes(formData.name))
-      if(element.length){
-        setType("error");
-        setIsShowDialog(false);
-        setMessage("Không được trùng tên! Thêm mới thất bại");
-        setNotification(true);
-      }
-      else {
+      if (formData.name) {
+        const element = rows.filter(e => e.name.includes(formData.name))
+        if (element.length) {
+          setType("error");
+          setIsShowDialog(false);
+          setMessage("Không được trùng tên! Thêm mới thất bại");
+          setNotification(true);
+        }
+        else {
           setInfo([...rows, formData]);
           setListCopy(listCopy.concat(formData));
           setNotification(true);
           setMessage("Thêm mới thanh cong");
           setType("success");
           setIsShowDialog(false);
-      }
+        }
 
-    }
-  else {
-    setMessage("Không được để trống các trường! Thêm mới thất bại");
-    setNotification(true);
-    setType("error");
-    setIsShowDialog(false);
-  }}else {
-      if(formData?.name) {
-      const element = rows.filter(e => (e.name == formData?.name))
-      if(!element.length) {
-      const updatedRows = rows.map((v) =>
-        v.id === formData.id ? formData : v
-      );
-      const updateCopy = listCopy.map((v) =>
-        v.id === formData.id ? formData : v
-      );
-      setMessage("");
-      setInfo(updatedRows);
-      setListCopy(updateCopy);
-      setNotification(true);
-      setType("success");
-      setIsShowDialog(false);
+      }
+      else {
+        setMessage("Không được để trống các trường! Thêm mới thất bại");
+        setNotification(true);
+        setType("error");
+        setIsShowDialog(false);
+      }
+    } else {
+      if (formData?.name) {
+        const element = rows.filter(e => (e.name == formData?.name))
+        if (!element.length) {
+          const updatedRows = rows.map((v) =>
+            v.id === formData.id ? formData : v
+          );
+          const updateCopy = listCopy.map((v) =>
+            v.id === formData.id ? formData : v
+          );
+          setMessage("");
+          setInfo(updatedRows);
+          setListCopy(updateCopy);
+          setNotification(true);
+          setType("success");
+          setIsShowDialog(false);
+        }
+        else {
+          setType("error");
+          setIsShowDialog(false);
+          setMessage("Không được trùng tên! Cap nhat thất bại");
+          setNotification(true);
+        }
       }
       else {
         setType("error");
         setIsShowDialog(false);
-        setMessage("Không được trùng tên! Cap nhat thất bại");
+        setMessage("Không được để trống các trường! Cap nhat thất bại");
         setNotification(true);
       }
     }
-    else {
-      setType("error");
-      setIsShowDialog(false);
-      setMessage("Không được để trống các trường! Cap nhat thất bại");
-      setNotification(true);
-    }}
   };
 
   const handleRowClick = (information: any, action: any) => {
@@ -378,6 +380,7 @@ function Test() {
   useEffect(() => {
     setTimeout(() => {
       setNotification(false);
+
     }, 9000);
   });
 
@@ -482,9 +485,11 @@ function Test() {
         }}
       >
         <ChildComponent
+          isShowCustom={true}
           closeDialog={closeDialog}
           isShowForm={isShowForm}
           action={action}
+          listConfigField={[]}
           info={info}
           dataFlow={handleSubmitChild}
         />
@@ -594,16 +599,6 @@ function Test() {
           >
             Copy
           </Button>
-          {/* <Button
-            variant="contained"
-            color="error"
-            onClick={() => {
-              dispatch(removeData());
-            }}
-            endIcon={<DeleteIcon />}
-          >
-            Xóa copy
-          </Button> */}
         </div>
       </div>
       <Box sx={{ height: 400, width: "100%" }}>
@@ -624,20 +619,9 @@ function Test() {
           pageSizeOptions={[5, 10, 20]}
           checkboxSelection
           disableRowSelectionOnClick
-          // loading={loading}
         />
       </Box>
       <BottomAppBar showCreate={true} isShowForm={showCreate} />
-      {/* <>
-      <h1>My {car.brand}</h1>
-      <p>
-        It is a {car.color} {car.model} from {car.year}.
-      </p>
-      <button
-        type="button"
-        onClick={updateColor}
-      >Blue</button>
-    </> */}
     </>
   );
 }

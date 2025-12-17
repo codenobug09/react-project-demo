@@ -13,6 +13,7 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Autocomplete from "@mui/material/Autocomplete";
 
+
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -22,24 +23,40 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
+
 function ChildComponent({
   isShowForm,
   dataFlow,
   info,
+  isShowCustom,
   action,
   closeDialog,
+  listConfigField
 }: {
   isShowForm: boolean;
   dataFlow: Function;
   closeDialog: Function;
   info: any;
   action: string;
+  listConfigField: any[]
+  isShowCustom: boolean;
 }) {
   const [name, setName] = useState("");
   const [age, setAge] = useState<number | "">("");
   const [live, setLive] = useState("");
   const [work, setWork] = useState("");
-
+  const [image, setImage] = useState<any>();
   function closeForm(e: any) {
     e.preventDefault();
     setName("");
@@ -60,14 +77,19 @@ function ChildComponent({
       work: work,
       relationship: transformTextTo(value),
     };
-    if(name && age && live && work && value){
-    dataFlow(payload);
-    closeForm(e);
+    if (name && age && live && work && value) {
+      dataFlow(payload);
+      closeForm(e);
     }
     else {
-      dataFlow({
-        id: ''
-      });
+      if (isShowCustom) {
+        dataFlow({
+          id: ''
+        });
+      }
+      else {
+        dataFlow(formData)
+      }
     }
   }
 
@@ -80,6 +102,21 @@ function ChildComponent({
       setWork(info.row.work);
     }
   }, [info]);
+
+  const initialFormData = listConfigField.reduce((acc, cur) => {
+    acc[cur.field] = '';
+    return acc;
+  }, {});
+
+  const [formData, setFormData] = useState(initialFormData);
+  const handleChange = (field: any) => (e: any) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      [field]: e.target.value
+    }));
+  };
+
+
 
   const listOptions = ["Độc thân", "Đã có gia đình", "Đang hẹn hò"];
 
@@ -111,83 +148,128 @@ function ChildComponent({
           <DialogContent dividers>
             <div className="form-container">
               <form className="form-container" onSubmit={handleSubmit}>
-                <Box sx={{ width: 300, maxWidth: "100%" }}>
-                  <TextField
-                    size="small"
-                    type="text"
-                    fullWidth
-                    onChange={(e) => setName(e.target.value)}
-                    label="Name"
-                    value={action.includes("detail") ? info.row.name : name}
-                    disabled={action.includes("detail")}
-                    id="fullWidth"
-                  />
-                </Box>
-                <br />
 
-                <Box sx={{ width: 300, maxWidth: "100%" }}>
-                  <TextField
-                    size="small"
-                    type="number"
-                    fullWidth
-                    onChange={(e) => setAge(Number(e.target.value))}
-                    label="Age"
-                    value={action.includes("detail") ? info.row.age : age}
-                    disabled={action.includes("detail")}
-                    id="fullWidth"
-                  />
-                </Box>
-                <br />
+                {
+                  isShowCustom ? (
+                    <>
+                      <Box sx={{ width: 300, maxWidth: "100%" }}>
+                        <TextField
+                          size="small"
+                          type="text"
+                          fullWidth
+                          onChange={(e) => setName(e.target.value)}
+                          label="Name"
+                          value={action.includes("detail") ? info.row.name : name}
+                          disabled={action.includes("detail")}
+                          id="fullWidth"
+                        />
+                      </Box>
+                      <br />
 
-                <Box sx={{ width: 300, maxWidth: "100%" }}>
-                  <TextField
-                    size="small"
-                    type="text"
-                    fullWidth
-                    onChange={(e) => setLive(e.target.value)}
-                    label="Live"
-                    value={action.includes("detail") ? info.row.live : live}
-                    disabled={action.includes("detail")}
-                    id="fullWidth"
-                  />
-                </Box>
-                <br />
+                      <Box sx={{ width: 300, maxWidth: "100%" }}>
+                        <TextField
+                          size="small"
+                          type="number"
+                          fullWidth
+                          onChange={(e) => setAge(Number(e.target.value))}
+                          label="Age"
+                          value={action.includes("detail") ? info.row.age : age}
+                          disabled={action.includes("detail")}
+                          id="fullWidth"
+                        />
+                      </Box>
+                      <br />
 
-                <Box sx={{ width: 300, maxWidth: "100%" }}>
-                  <TextField
-                    size="small"
-                    type="text"
-                    fullWidth
-                    onChange={(e) => setWork(e.target.value)}
-                    label="work"
-                    value={action.includes("detail") ? info.row.work : work}
-                    disabled={action.includes("detail")}
-                    id="fullWidth"
-                  />
-                </Box>
+                      <Box sx={{ width: 300, maxWidth: "100%" }}>
+                        <TextField
+                          size="small"
+                          type="text"
+                          fullWidth
+                          onChange={(e) => setLive(e.target.value)}
+                          label="Live"
+                          value={action.includes("detail") ? info.row.live : live}
+                          disabled={action.includes("detail")}
+                          id="fullWidth"
+                        />
+                      </Box>
+                      <br />
 
-                <br />
+                      <Box sx={{ width: 300, maxWidth: "100%" }}>
+                        <TextField
+                          size="small"
+                          type="text"
+                          fullWidth
+                          onChange={(e) => setWork(e.target.value)}
+                          label="work"
+                          value={action.includes("detail") ? info.row.work : work}
+                          disabled={action.includes("detail")}
+                          id="fullWidth"
+                        />
+                      </Box>
 
-                <Box sx={{ width: 300, maxWidth: "100%" }}>
-                  <Autocomplete
-                    value={value}
-                    size="small"
-                    onChange={(event: any, newValue: string | null) => {
-                      if (action.includes("detail")) {
-                        setValue(info.row.relationship);
-                      } else {
-                        setValue(newValue);
-                      }
-                    }}
-                    disabled={action.includes("detail")}
-                    id="controllable-states-demo"
-                    options={listOptions}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Tình trạng hôn nhân" />
-                    )}
-                  />
-                </Box>
-                <br />
+                      <br />
+
+                      <Box sx={{ width: 300, maxWidth: "100%" }}>
+                        <Autocomplete
+                          value={value}
+                          size="small"
+                          onChange={(event: any, newValue: string | null) => {
+                            if (action.includes("detail")) {
+                              setValue(info.row.relationship);
+                            } else {
+                              setValue(newValue);
+                            }
+                          }}
+                          disabled={action.includes("detail")}
+                          id="controllable-states-demo"
+                          options={listOptions}
+                          renderInput={(params) => (
+                            <TextField {...params} label="Tình trạng hôn nhân" />
+                          )}
+                        />
+                      </Box>
+                      <br /> </>) : (
+
+                    listConfigField.map(v => (
+                      <>
+                        <Box key={v.field} sx={{ width: 300, maxWidth: "100%" }}>
+                          <TextField
+                            size="small"
+                            type={v.type}
+                            fullWidth
+                            label={v.label}
+                            value={
+                              action.includes("detail")
+                                ? info?.row?.[v.field] ?? ''
+                                : formData[v.field]
+                            }
+                            onChange={handleChange(v.field)}
+                            disabled={action.includes("detail")}
+                          />
+                        </Box>
+                        <br />
+                        {/* <Button
+                          component="label"
+                          role={undefined}
+                          variant="contained"
+                          tabIndex={-1}
+                          startIcon={<CloudUploadIcon />}
+
+                        >
+                          Upload files
+                          <VisuallyHiddenInput
+                            type="file"
+                            onChange={(event) => {setImage(event.target.files)
+                            }}
+                            multiple
+                          />
+                        </Button> */}
+
+                        {/* <img src={}></img> */}
+                      </>
+                    )))
+                }
+
               </form>
             </div>
           </DialogContent>

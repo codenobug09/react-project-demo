@@ -64,24 +64,6 @@ function Profile() {
             </Typography>
 
             <VerticalTabs listLabel={listLabel} />
-
-            <div style={{ padding: 20 }}>
-              <h1>{count}</h1>
-
-              <button onClick={() => dispatch(increment())}>+</button>
-              <button
-                style={{ marginLeft: 8 }}
-                onClick={() => dispatch(decrement())}
-              >
-                -
-              </button>
-              <button
-                style={{ marginLeft: 8 }}
-                onClick={() => dispatch(incrementBy(5))}
-              >
-                +5
-              </button>
-            </div>
           </Box>
         </Card>
       </div>
