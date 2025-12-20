@@ -26,14 +26,14 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../redux/store/store.ts";
 import { copyData, removeData } from "../../redux/store/copySave.tsx";
-import { isFulfilled } from "@reduxjs/toolkit";
 
 function Test() {
+  const [field, setField] = useState('');
   const [isShowForm, setShowForm] = useState(false);
   const [info, getInfo] = useState("");
   const [action, setAction] = useState("");
   const [search, setName] = useState("");
-  const [type, setType] = useState("");
+  const [type, setType] = useState<"success" | "info" | "warning" | "error">("success");
   const [selection, setSelection] = useState([]);
   const [listSelection, setListSelection] = useState<any[]>([]);
   const [message, setMessage] = useState("");
@@ -41,9 +41,10 @@ function Test() {
   const [copy, setCopy] = useState<any[]>([]);
   const [working, setWorking] = useState("");
   const [notification, setNotification] = useState(false);
-  const [infomation, getInformation] = useState(null);
+  const [infomation, getInformation] = useState({});
   const [isShowDialog, setIsShowDialog] = useState(false);
   const [selectionBooolean, setSelectionBoolean] = useState(false);
+  const [fixName, setFixName] = useState(false);
   const [car, setCar] = useState({
     brand: "Ford",
     model: "Mustang",
@@ -74,13 +75,11 @@ function Test() {
     {
       field: "live",
       headerName: "Nơi sống",
-      type: "number",
       width: 110,
     },
     {
       field: "work",
       headerName: "Làm việc",
-      type: "number",
       width: 110,
     },
     {
@@ -92,10 +91,21 @@ function Test() {
         `${transformText(value) || transformText(row.relationship)}`,
     },
     {
+      field: "createdAt",
+      headerName: "Thời gian tạo",
+      width: 110,
+    },
+    {
+      field: "updatedAt",
+      headerName: "Thời gian cập nhật",
+      width: 110,
+    },
+    {
       field: "actions",
       headerName: "Hành động",
       description: "This column has list actions",
       sortable: false,
+      disableColumnMenu: true,
       width: 160,
       renderCell: (params) => (
         <>
@@ -109,6 +119,7 @@ function Test() {
                     onClick={() => {
                       handleRowClick(params, "update");
                       setShowForm(true);
+                      setFixName(true);
                     }}
                   />
                 </IconButton>
@@ -123,6 +134,7 @@ function Test() {
                     onClick={() => {
                       handleRowClick(params, "detail");
                       setShowForm(true);
+                      setFixName(true);
                     }}
                   />
                 </IconButton>
@@ -135,8 +147,10 @@ function Test() {
                     color={"error"}
                     sx={{ cursor: "pointer" }}
                     onClick={() => {
+                      fixName
                       deleteRow(params);
                       setSelectionBoolean(false);
+                      setFixName(true);
                     }}
                   />
                 </IconButton>
@@ -147,11 +161,13 @@ function Test() {
       ),
     },
   ];
+  
   const updateColor = () => {
     setCar(previousState => {
       return { ...previousState, color: "blue" }
     });
   }
+
   const [rows, setInfo] = useState([
     {
       id: "TCI1",
@@ -159,6 +175,8 @@ function Test() {
       age: 22,
       live: "Ha Noi",
       work: "Thu cuc TCI",
+      createdAt: "15:3-17/11/2025",
+      updatedAt: "15:3-17/11/2025",
       relationship: "alone",
     },
     {
@@ -167,6 +185,8 @@ function Test() {
       age: 30,
       live: "Ha Noi",
       work: "Thu cuc TCI",
+      createdAt: "15:3-17/11/2025",
+      updatedAt: "15:3-17/11/2025",
       relationship: "alone",
     },
     {
@@ -175,6 +195,8 @@ function Test() {
       age: 33,
       live: "Ha Noi",
       work: "Thu cuc TCI",
+      createdAt: "15:3-17/11/2025",
+      updatedAt: "15:3-17/11/2025",
       relationship: "family",
     },
     {
@@ -183,6 +205,8 @@ function Test() {
       age: 20,
       live: "Ha Noi",
       work: "Thu cuc TCI",
+      createdAt: "15:3-17/11/2025",
+      updatedAt: "15:3-17/11/2025",
       relationship: "in-relationship",
     },
     {
@@ -191,14 +215,19 @@ function Test() {
       age: 20,
       live: "Ha Noi",
       work: "Thu cuc TCI",
+      createdAt: "15:3-17/11/2025",
+      updatedAt: "15:3-17/11/2025",
       relationship: "",
     },
   ]);
 
   const listOptions = ["Độc thân", "Đã có gia đình", "Đang hẹn hò"];
+
   const [listCopy, setListCopy] = useState<any[]>(rows);
 
   const handleSubmitChild = (formData: any) => {
+    if(fixName){
+    const day = new Date();
     if (action.includes("create")) {
       if (formData.name) {
         const element = rows.filter(e => e.name.includes(formData.name))
@@ -209,8 +238,12 @@ function Test() {
           setNotification(true);
         }
         else {
-          setInfo([...rows, formData]);
-          setListCopy(listCopy.concat(formData));
+          const payload = {
+            ...formData,
+            createdAt: day.getHours()+':'+day.getMinutes()+'-'+day.getDate()+'/'+day.getMonth()+'/'+day.getFullYear()
+          }
+          setInfo([...rows, payload]);
+          setListCopy(listCopy.concat(payload));
           setNotification(true);
           setMessage("Thêm mới thanh cong");
           setType("success");
@@ -228,18 +261,25 @@ function Test() {
       if (formData?.name) {
         const element = rows.filter(e => (e.name == formData?.name))
         if (!element.length) {
+          rows.map((e: any) => {
+          if(e.id == formData.id){
+          const payload = {
+            ...formData,
+            createdAt: e?.createdAt,
+            updatedAt: day.getHours()+':'+day.getMinutes()+'-'+day.getDate()+'/'+day.getMonth()+'/'+day.getFullYear()
+          }
           const updatedRows = rows.map((v) =>
-            v.id === formData.id ? formData : v
+            v.id === formData.id ? payload : v
           );
           const updateCopy = listCopy.map((v) =>
-            v.id === formData.id ? formData : v
+            v.id === formData.id ? payload : v
           );
           setMessage("");
           setInfo(updatedRows);
           setListCopy(updateCopy);
           setNotification(true);
           setType("success");
-          setIsShowDialog(false);
+          setIsShowDialog(false);}})
         }
         else {
           setType("error");
@@ -254,6 +294,13 @@ function Test() {
         setMessage("Không được để trống các trường! Cap nhat thất bại");
         setNotification(true);
       }
+    }
+    }
+    else {
+      listSelection.map(v => v.age = formData.age);
+      setNotification(true);
+      setMessage("Sửa thành công !");
+      setType("success");
     }
   };
 
@@ -279,8 +326,6 @@ function Test() {
       relation: value,
       working: working,
     };
-
-    // setLoading(true);
 
     if (object) {
       const result = listCopy.filter(
@@ -367,7 +412,6 @@ function Test() {
       setInfo(result);
     }
 
-    // setLoading(false);
   };
 
   const resetForm = () => {
@@ -394,6 +438,7 @@ function Test() {
   };
 
   const showCreate = (isShowDialog: boolean) => {
+    setFixName(true)
     setShowForm(isShowDialog);
     setAction("create");
   };
@@ -425,6 +470,12 @@ function Test() {
 
       setListCopy(copy);
     }
+    
+    if (field == '__check__') {
+      setInfo([])
+    }
+
+
     setNotification(true);
     setType("success");
     setIsShowDialog(false);
@@ -436,6 +487,7 @@ function Test() {
 
   const removeSelection = () => {
     const arr = new Set(selection);
+    setFixName(true);
     const list: any[] = [];
     if (arr.size) {
       arr.forEach((v) => {
@@ -444,13 +496,20 @@ function Test() {
         setListSelection(list);
         setIsShowDialog(true);
         setSelectionBoolean(false);
-        getInformation(null);
+        getInformation({});
       });
     } else {
       setIsShowDialog(true);
       setSelectionBoolean(true);
     }
   };
+
+  const removeAll = () => {
+    setFixName(true)
+    if(listSelection.length){
+    setIsShowDialog(true);
+    }
+  }
 
   const copySelection = () => {
     const arr = new Set(selection);
@@ -464,12 +523,26 @@ function Test() {
         setListSelection(list);
         setCopy(listSelection);
         dispatch(copyData(copy[0]));
-        console.log(copy[0]);
-        console.log(element[0])
       });
     } else {
       setIsShowDialog(true);
       setSelectionBoolean(true);
+    }
+  };
+
+  const copySelection2 = () => {
+    const arr = new Set(selection);
+    setFixName(false);
+    const list: any[] = [];
+    setShowForm(true)
+    if (arr.size) {
+      arr.forEach((v) => {
+        const element = rows.filter((e) => e.id == v);
+        list.push(element[0]);
+        setListSelection(list);
+        setCopy(listSelection);
+        
+      });
     }
   };
 
@@ -485,6 +558,7 @@ function Test() {
         }}
       >
         <ChildComponent
+          isFixName={fixName}
           isShowCustom={true}
           closeDialog={closeDialog}
           isShowForm={isShowForm}
@@ -593,11 +667,27 @@ function Test() {
           </Button>
           <Button
             variant="contained"
+            color="error"
+            onClick={removeAll}
+            endIcon={<DeleteIcon />}
+          >
+            Xóa tất cả
+          </Button>
+          <Button
+            variant="contained"
             color="info"
             onClick={copySelection}
             endIcon={<ContentCopyIcon />}
           >
             Copy
+          </Button>
+          <Button
+            variant="contained"
+            color="info"
+            onClick={copySelection2}
+            endIcon={<BorderColorIcon />}
+          >
+            Sửa nhiều
           </Button>
         </div>
       </div>
@@ -605,6 +695,12 @@ function Test() {
         <DataGrid
           onRowSelectionModelChange={(value) => {
             selectedRows(value);
+          }}
+          onColumnHeaderClick={(value) => {
+            if(value?.field == '__check__'){
+              setListSelection(rows);
+              setField('__check__')
+            }
           }}
           rows={rows}
           columns={columns}

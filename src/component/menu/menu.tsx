@@ -11,7 +11,7 @@ import ContentPasteGoIcon from "@mui/icons-material/ContentPasteGo";
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { copyData, removeData } from "../../redux/store/copySave";
+import { removeData } from "../../redux/store/copySave";
 import Tooltip from "@mui/material/Tooltip";
 import MoodIcon from '@mui/icons-material/Mood';
 import List from '@mui/material/List';
@@ -27,29 +27,95 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import GradeIcon from '@mui/icons-material/Grade';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import FaceIcon from '@mui/icons-material/Face';
-const ProductItem = React.memo(({ product, onFavorite }) => {
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
+import Avatar from "@mui/material/Avatar";
+import { GridMoreVertIcon } from "@mui/x-data-grid";
+import CardMedia from "@mui/material/CardMedia";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import CardActions from "@mui/material/CardActions";
+import ShareIcon from '@mui/icons-material/Share';
+
+const Button = React.memo(({ onClick, text }:{onClick: any, text: string}) => {
+  console.log(`${text} button rendered`);
+  return <button onClick={onClick}>{text}</button>;
+});
+
+const ProductItem = React.memo(({ product, onFavorite }:{product: any, onFavorite: any}) => {
   console.log(`Rendering ${product?.name}, ${product?.isFavorite}`);
   return (
-    <div key={product?.id} className="product-card">
-      <img
-        src={product?.image}
-        alt={product?.name}
-        className="product-image"
+    <Card className="product-card" key={product?.id} sx={{ minWidth: 321 }}>
+      <CardHeader
+        avatar={
+          <Avatar sx={{ bgcolor: 'red' }} aria-label="recipe">
+            R
+          </Avatar>
+        }
+        action={
+          <IconButton aria-label="settings">
+            <GridMoreVertIcon />
+          </IconButton>
+        }
+        title="Shrimp and Chorizo Paella"
+        subheader="September 14, 2016"
       />
-
-      <h3 className="product-name">{product?.name}</h3>
-
-      <button
-        onClick={() => onFavorite(product?.id)}
-        className={`favorite-btn ${product?.isFavorite ? 'favorite' : 'not-favorite'}`}
-      >
-        {product?.isFavorite ? "❤️ Unfavorite" : "🤍 Favorite"}
-      </button>
-    </div>
-
+      <CardMedia
+        component="img"
+        height="194"
+        image={product?.image}
+        alt="Paella dish"
+      />
+      <CardContent>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+        {product?.name}
+        </Typography>
+      </CardContent>
+      <CardActions disableSpacing>
+        <IconButton aria-label="add to favorites">
+          <FavoriteIcon  
+          onClick={() => onFavorite(product?.id)}
+          className={`${product?.isFavorite ? 'favorite' : 'not-favorite'}`} />
+        </IconButton>
+        <IconButton aria-label="share">
+          <ShareIcon />
+        </IconButton>
+      </CardActions>
+    </Card>
   );
 });
 function MenuComponent({ listPro }: { listPro: any[] }) {
+  // const expensiveCalculation = (num) => {
+  //   console.log("Calculating...");
+  //   for (let i = 0; i < 1000000000; i++) {
+  //     num += 1;
+  //   }
+  //   return num;
+  // };
+  
+  // const [counter, setCount] = useState(0);
+  // const [todos, setTodos] = useState([]);
+  // const calculation = useMemo(() => expensiveCalculation(counter), [counter]);
+
+  // const increment = () => {
+  //   setCount((c) => c + 1);
+  // };
+  // const addTodo = () => {
+  //   setTodos((t) => [...t, "New Todo"]);
+  // };
+  // const [count1, setCount1] = useState(0);
+  // const [count2, setCount2] = useState(0);
+
+  // // These functions are memoized and only recreated when dependencies change
+  // const handleClick1 = useCallback(() => {
+  //   setCount1(count1 + 2);
+  // }, [count1]);
+
+  // const handleClick2 = useCallback(() => {
+  //   setCount2(count2 + 2);
+  // }, [count2]);
+
+  // console.log("Parent rendered");
   const count = useSelector((state: RootState) => state.cache.value);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -397,6 +463,30 @@ function MenuComponent({ listPro }: { listPro: any[] }) {
           </>
         }
       </Menu>
+      {/* <div>
+      <h2>With useCallback:</h2>
+      <p>Count 1: {count1}</p>
+      <p>Count 2: {count2}</p>
+      <Button onClick={handleClick1} text="Button 1" />
+      <Button onClick={handleClick2} text="Button 2" />
+    </div>
+    <div>
+      <div>
+        <h2>My Todos</h2>
+        {todos.map((todo, index) => {
+          return <p key={index}>{todo}</p>;
+        })}
+        <button onClick={addTodo}>Add Todo</button>
+      </div>
+      <hr />
+      <div>
+        Count: {counter}
+        <button onClick={increment}>+</button>
+        <h2>Expensive Calculation</h2>
+        {calculation}
+        <p>Note that this example executes the expensive function also when you click on the Add Todo button.</p>
+      </div>
+    </div> */}
     </div>
   );
 }

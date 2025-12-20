@@ -23,18 +23,6 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
-
 function ChildComponent({
   isShowForm,
   dataFlow,
@@ -42,8 +30,10 @@ function ChildComponent({
   isShowCustom,
   action,
   closeDialog,
-  listConfigField
+  listConfigField,
+  isFixName
 }: {
+  isFixName: boolean;
   isShowForm: boolean;
   dataFlow: Function;
   closeDialog: Function;
@@ -56,7 +46,8 @@ function ChildComponent({
   const [age, setAge] = useState<number | "">("");
   const [live, setLive] = useState("");
   const [work, setWork] = useState("");
-  const [image, setImage] = useState<any>();
+
+  const [fixAge, setfixAge] = useState<number>();
   function closeForm(e: any) {
     e.preventDefault();
     setName("");
@@ -68,6 +59,7 @@ function ChildComponent({
   }
 
   function handleSubmit(e: any) {
+    if(isFixName) {
     e.preventDefault();
     const payload = {
       id: action.includes("create") ? "TCI" + `${Math.random()}` : info.id,
@@ -75,7 +67,7 @@ function ChildComponent({
       age: age,
       live: live,
       work: work,
-      relationship: transformTextTo(value),
+      relationship: transformTextTo(value)
     };
     if (name && age && live && work && value) {
       dataFlow(payload);
@@ -91,6 +83,14 @@ function ChildComponent({
         dataFlow(formData)
       }
     }
+  }
+  else {
+    const payload = {
+      age: fixAge
+    }
+    dataFlow(payload)
+    closeForm(e);
+  }
   }
 
   useEffect(() => {
@@ -131,7 +131,7 @@ function ChildComponent({
           open={isShowForm}
         >
           <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-            {tranformText(action)}
+            {isFixName ? tranformText(action) : 'Xin chào'}
           </DialogTitle>
           <IconButton
             aria-label="close"
@@ -148,10 +148,13 @@ function ChildComponent({
           <DialogContent dividers>
             <div className="form-container">
               <form className="form-container" onSubmit={handleSubmit}>
-
+               
                 {
                   isShowCustom ? (
                     <>
+                      {
+                        isFixName ? (
+                        <>
                       <Box sx={{ width: 300, maxWidth: "100%" }}>
                         <TextField
                           size="small"
@@ -228,7 +231,24 @@ function ChildComponent({
                           )}
                         />
                       </Box>
-                      <br /> </>) : (
+                      <br />
+                      </> ) : (
+                        <Box sx={{ width: 300, maxWidth: "100%" }}>
+                        <TextField
+                          size="small"
+                          type="number"
+                          fullWidth
+                          onChange={(e) => setfixAge(Number(e.target.value))
+                          }
+                          label="age"
+                          value={fixAge}
+                          disabled={action.includes("detail")}
+                          id="fullWidth"
+                        />
+                      </Box>
+                      )
+                      } 
+                      </>) : (
 
                     listConfigField.map(v => (
                       <>
@@ -278,7 +298,7 @@ function ChildComponent({
               <div></div>
             ) : (
               <Button autoFocus onClick={handleSubmit}>
-                {action.includes("update") ? "Cập nhật" : "Tạo mới"}
+                {action.includes("update") || !isFixName ? "Cập nhật" : "Tạo mới"}
               </Button>
             )}
           </DialogActions>
